@@ -4,21 +4,20 @@
 
 (->> '[[cnuernber/libpython-clj "1.2"]
        [panthera "0.1-alpha.16"]
-       [cheshire "5.9.0"]]
+       [metosin/jsonista "0.2.4"]]
      (map distill)
      doall)
 
 
-(require '[cheshire.core :as cheshire]
-         '[clojure.walk :as walk]
+(require '[clojure.walk :as walk]
          '[clojure.string :as string])
 
 
 ;; Ipynb to clj:
-#_
-(-> "panthera-test.ipynb"
+;; (requires cheshire)
+#_(-> "panthera-test.ipynb"
     slurp
-    (cheshire/parse-string true)
+    (cheshire.core/parse-string true)
     :cells
     (->> (mapcat :source)
          (string/join "\n")
@@ -113,4 +112,3 @@ common-corpus
 
 (py/call-attr-kw (gensim-models) "LdaModel" common-corpus { "num_topics" 5})
 
-(doc py/call-attr-kw)

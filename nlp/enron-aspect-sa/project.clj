@@ -5,6 +5,6 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [alembic "0.3.2"]
-                 [cider/cider-nrepl "0.22.3"]]
+                 #_[cider/cider-nrepl "0.22.3"]]
   ;; :repl-options {:init-ns trypy.core}
   )
