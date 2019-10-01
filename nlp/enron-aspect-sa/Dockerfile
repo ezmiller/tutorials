@@ -1,6 +1,7 @@
 FROM simplect/clojupyter:0.2.2
 
 EXPOSE 8888
+EXPOSE 4444
 
 # For building locally select your favorite mirror
 ENV REPO "http://fr.archive.ubuntu.com/ubuntu bionic main"
@@ -14,4 +15,5 @@ RUN echo "deb http://fr.archive.ubuntu.com/ubuntu bionic main" >> /etc/apt/sourc
 
 USER jovyan
 
-CMD ["jupyter", "notebook", "--log-level=ERROR", "--allow-root"]
+# CMD ["jupyter", "notebook", "--log-level=ERROR", "--allow-root"]
+CMD ["lein", "repl", ":headless", ":host", "0.0.0.0", ":port", "4444"]
