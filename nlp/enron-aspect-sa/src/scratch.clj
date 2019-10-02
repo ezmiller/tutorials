@@ -36,6 +36,30 @@
 
 (py/initialize!)
 
+
+
+;; Adapting Panthera's module function to avoid key conversions.
+(defn module
+  [py-module]
+  (fn [x]
+    (fn
+      ([]
+       (if (seqable? x)
+         (let [ks x]
+           (py/get-attr (np/py-get-in py-module ks) (last ks)))
+         (py/get-attr py-module x)))
+      ([attrs]
+       (if (seqable? x)
+         (let [ks x]
+           (py/call-attr-kw (np/py-get-in py-module ks) (last ks)
+                            (vec (:args attrs))
+                            (u/keys->pyargs (dissoc attrs :args))))
+         (py/call-attr-kw py-module x
+                          (vec (:args attrs))
+                          (u/keys->pyargs (dissoc attrs :args))))))))
+
+
+
 ;; Wrapping Scikit Learn (sklearn)
 
 (defonce sk (py/import-module "sklearn"))
@@ -43,12 +67,11 @@
 (py/run-simple-string "from sklearn import *")
 
 (defn sklearn
-  ([k] ((np/module sk) k))
-  ([k args] (((np/module sk) k) args)))
+  ([k] ((module sk) k))
+  ([k args] (((module sk) k) args)))
 
-(def sample-data (sklearn [:datasets :make-multilabel-classification]
+(def sample-data (sklearn [:datasets :make_multilabel_classification]
                           {:random-state 0 }))
-
 
 (def X (first sample-data))
 
@@ -60,8 +83,7 @@
 
 (def decomp ((sklearn [:decomposition])))
 
-(def lda (-> ((sklearn [:decomposition]))
-             (py/get-attr "LatentDirichletAllocation")))
+(def lda ((sklearn [:decomposition :LatentDirichletAllocation])))
 
 ;; Wrapping Gensim
 
@@ -71,13 +93,11 @@
 
 (pprint (py/att-type-map gs))
 
-
-
 (defn gensim
-  ([k] ((np/module gs) k))
-  ([k args] (((np/module gs) k) args)))
+  ([k] ((module gs) k))
+  ([k args] (((module gs) k) args)))
 
-(def common-texts (gensim [:test :utils :common-texts]))
+(def common-texts (gensim [:test :utils :common_texts]))
 
 (common-texts)
 
@@ -99,7 +119,7 @@ common-corpus
 
 (def gensim-models (gensim [:models]))
 
-(def LdaModel (py/get-attr (gensim-models) "LdaModel"))
+(def LdaModel (gensim [:models :LdaModel]))
 
 (type common-corpus)
 
