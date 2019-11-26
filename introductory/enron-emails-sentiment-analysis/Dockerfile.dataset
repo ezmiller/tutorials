@@ -1,0 +1,4 @@
+FROM alpine:3.7 AS dataset
+RUN apk update && apk add --no-cache wget tar
+COPY --chown=root ./scripts/build_dataset.sh /
+RUN sh -c "./build_dataset.sh"
