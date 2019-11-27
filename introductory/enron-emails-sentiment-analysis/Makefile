@@ -1,7 +1,7 @@
 build-dataset:
 	docker build --force-rm -t enron-sentmail-dataset -f Dockerfile.dataset .
 
-build:
+build-notebook:
 	docker build --no-cache --force-rm -t enron-analysis .
 
 start:
